@@ -74,7 +74,7 @@ const pdfController={
             });
             
             console.log("done creating pdf");
-        
+         
             await browser.close();
         
             // process.exit();
