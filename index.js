@@ -1,6 +1,8 @@
 import express, { json, urlencoded } from "express";
 import cors from "cors";
 import { set, connect } from "mongoose";
+import mongoose from 'mongoose';
+
 import * as dotenv from 'dotenv';
 import  router  from "./router/routes.js";
 
@@ -17,5 +19,12 @@ app.options("*",cors());
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`The server has started on port: ${PORT}`));
 
+mongoose.connect(process.env.MONGODB_CONNECTION_STRING)
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.log('MongoDB connection error:', err));
+
+
 
   app.use('/',router);
+
+  app.use('/files',express.static('docs'))
