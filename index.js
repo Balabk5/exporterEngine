@@ -9,7 +9,7 @@ import  router  from "./router/routes.js";
 dotenv.config()
 
 const app = express();
-app.use(json());
+app.use(json({limit: '50mb'}));
 
 app.use(urlencoded({extended:true}));
 app.use(cors());

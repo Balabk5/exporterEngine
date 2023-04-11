@@ -6,6 +6,8 @@ import AWS from "aws-sdk";
 import fetch from "node-fetch";
 import { Stream } from "stream";
 import { response } from "express";
+import aPIkeyandendpoints from "../models/apiData.js";
+import axios from "axios";
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -151,6 +153,43 @@ const pdfController = {
         }
       );
       // console.log(data)
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    }
+  },
+  generatePdfByCallingApi: async function (req, res) {
+    // let URLlastpart = req.body.URLlastpart
+    try {
+      let urlParams = req.body.urlParams;
+
+      // const resultUrl = await aPIkeyandendpoints.find({Endpoints: { $regex: urlParams.urlEndPart, $options: "i" }},{Endpoints:1})
+      const resultUrl = await aPIkeyandendpoints.find(
+        { Endpoints: { $elemMatch: { $regex: urlParams.urlEndPart } } },
+        { Endpoints: { $elemMatch: { $regex: urlParams.urlEndPart } } }
+      );
+      let resultUrlFinal = resultUrl[0].Endpoints[0];
+
+      let resultUrlFinalWithParama = `${resultUrlFinal}?page=${urlParams.page}&limit=10&search=${urlParams.search}&sort=${urlParams.sort.sort},${urlParams.sort.order}&collectionName=${urlParams.collectionName},&searchProperty=${urlParams.searchProperty}`;
+      // console.log(resultUrlFinalWithParama)
+
+      axios.get(resultUrlFinalWithParama).then((response) => {
+        // console.log(response.data);
+        const tabledata = response.data.resultTableData
+        const values = tabledata.map((doc) => Object.values(doc));
+        const parameterNames = Object.keys(tabledata[0]);
+    
+        const tableDataWithObjectName = {
+          table: values,
+          tableHeaders: parameterNames,
+        };
+        console.log(tableDataWithObjectName)
+      });
+
+
+      res.status(200).send("success");
     } catch (err) {
       console.log(err);
       res.status(500).json({

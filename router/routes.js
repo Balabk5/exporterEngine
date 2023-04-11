@@ -7,7 +7,7 @@ const router = Router();
 router.post('/generatePdf',pdfController.generatePdf)
 router.get('/downloadPdf', pdfController.downloadPdf)
 router.post('/collectAPI', gettingDataFromAPI.gettingDataFromAPI)
-router.get('/justtry', gettingDataFromAPI.justtry)
+router.post('/generatePdfUsingapi', pdfController.generatePdfByCallingApi)
 
 
 
